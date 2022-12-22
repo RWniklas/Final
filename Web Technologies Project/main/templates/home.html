@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block content %}
+    
+    {% for post in posts%}
+        {% if post.priv==False or post.author==current_user%}
+
+        
+        {{ form.hidden_tag() }}
+            <div class="container mt-5 mb-5">
+            <div class="row d-flex align-items-center justify-content-center">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="d-flex justify-content-between p-2 px-3">
+                            <div class="d-flex flex-row align-items-center"> <img src="{{url_for('static',filename='assets/'+ post.author.image_file)}}"width="50" class="rounded-circle">
+                                <div class="d-flex flex-column ml-2"> <span class="font-weight-bold">{{ post.author.username }}</span>  </div>
+                            </div>
+                            <div class="d-flex flex-row mt-1 ellipsis"> <small class="mr-2">{{ post.date_posted.strftime('%Y-%m-%d') }}</small> <i class="fa fa-ellipsis-h"></i> </div>
+                        </div> <h1 class="text-justify text-center">{{ post.title }}</h1><img src="{{url_for('static',filename='assets/'+ post.img)}}" class="img-fluid">
+                        <div class="p-2">
+                            
+                            <p class="text-justify text-center">{{ post.content }}</p>
+                            
+                            
+                            {% if current_user.is_authenticated %}
+                                <form method="POST",action="" >
+                                    <input type="hidden" name="post" value={{post.id}}>
+                                {% if post.id in user_like_id %}
+                                  
+                                    <button type= "submit" name= "like_box" value="test"class="btn btn-outline-danger">
+                                        <i class="fa fa-heart"></i>
+                                      </button>          
+
+                                {% else %}
+                                    <button type= "submit" name= "like_box" value="test"class="btn btn-outline-dark">
+                                        <i class="fa fa-heart"></i>
+                                    </button>  
+                                {%endif%} 
+                            {%endif%} 
+                            <p class="text-justify">{{ post.like|length }}
+                            
+                                
+                            </form>
+                            <hr>
+                            <div class="d-flex justify-content-between align-items-center">
+                                
+                                <input type="button" onclick="toggle()" class="btn btn-outline-success left"value="Comments" >
+                                
+                                <div class="d-flex flex-row muted-color"> <span>{{post.comments|length}}</span> <span class="ml-2">.      Comments in total</span> </div>
+                            </div>
+                            <hr>
+
+                            <div class="comments_hide" id="comments_hide_{{ loop.index }}">
+                            
+                            
+                                {% for com in post.comments %}
+                                    <div class="d-flex flex-row mb-2"> <img src="{{url_for('static',filename='assets/'+ com.author.image_file)}}" width="40" class="rounded-image">
+                                        <div class="d-flex flex-column ml-2"> <a class="link-secondary" href="{{url_for('profile',user=com.author.username)}}">{{com.author.username}} </a> <small class="comment-text">{{com.content}}</small>
+                                           
+                                    
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                {% if current_user.is_authenticated %}
+                                <div class="comment-input"> 
+                                   <form method="POST",action="">
+                                    <p>Comment</p>
+                                    <p><input type="text" name="content"></p>
+                                    <input type="hidden" name="post" value={{post.id}}>
+                                    <p><input class="btn btn-outline-success"type="submit" name="submit"></p>
+                                    
+                                   </form>  
+                                  
+                                   {% endif %}
+                                </div>
+                            </div>
+                                
+                                
+                                
+                                
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        {% endif %}
+        
+    {% endfor %}
+
+    <script>
+			
+            function toggle() {
+  const commentsHide = document.querySelector(".comments_hide");
+  if (commentsHide.style.display === 'none') {
+    commentsHide.style.display = 'block';
+  } else {
+    commentsHide.style.display = 'none';
+  }
+}
+       
+    </script>
+
+
+    
+{% endblock content %}
+
+
